@@ -53,13 +53,13 @@
         <div class="card">
           <h5 class="card-title">Patient Login</h5>
           <p class="card-text">Access your patient account to view medical records and appointments.</p>
-          <a href="#" class="btn btn-primary">Login</a>
-          <p class="mt-3">Don't have an account? <a href="#">Create one</a></p>
+          <a href="{%url 'mtrms:login_patient'%}" class="btn btn-primary">Login</a>
+          <p class="mt-3">Don't have an account? <a href="{%url 'mtrms:signup_patient'%}">Create one</a></p>
         </div>
         <div class="card">
           <h5 class="card-title">Doctor Login</h5>
           <p class="card-text">Access your doctor's account to manage patients and appointments.</p>
-          <a href="#" class="btn btn-primary">Login</a>
+          <a href="{%url 'mtrms:login_doctor'%}" class="btn btn-primary">Login</a>
         </div>
       </div>
     </div>
