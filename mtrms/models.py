@@ -30,8 +30,8 @@ class Test(models.Model):
     date=models.DateField()
     
 class Report(models.Model):
-    doctor=models.ForeignKey(Doctor,on_delete=models.CASCADE)
-    patient=models.ForeignKey(Patient,on_delete=models.CASADE)
+    doctor=models.ForeignKey(Doctor,on_delete=models.SET_NULL,null=True)
+    patient=models.ForeignKey(Patient,on_delete=models.SET_NULL,null=True)
     date=models.DateField()
-    conclusion=models.CharField(max_length=128,default='-')
-    notes=models.CharField(max_length=10240,blank='-')
+    result=models.CharField(max_length=128,default='-')
+    notes=models.CharField(max_length=10240,blank=True)
