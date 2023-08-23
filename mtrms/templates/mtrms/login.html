@@ -39,15 +39,16 @@
 {% block body %}
 <div class="login-box">
     <header class="login-header">
-      <h1>Patient Login</h1>
+      <h1>{{title}}</h1>
     </header>
 
-    <form class="login-form">
+    <form action="{%url 'mtrms:login_doctor'%}" method='post' class="login-form">
+      {% csrf_token %}
       <div class="mb-3">
-        <input type="email" class="form-control" placeholder="Email">
+        <input type="text" class="form-control" placeholder="username" name="username">
       </div>
       <div class="mb-3">
-        <input type="password" class="form-control" placeholder="Password">
+        <input type="password" class="form-control" placeholder="Password" name="password">
       </div>
       <button type="submit" class="btn btn-primary btn-login">Login</button>
     </form>
