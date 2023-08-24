@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponse,redirect
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib import admin
+from .models import User
 
 # Create your views here.
 def index(request):
@@ -27,8 +28,42 @@ class LoginDoctor(View):
                 request.session['first_name'] = user.first_name
                 return redirect('/doctor-dashboard/')
         return HttpResponse("Not valid ")
-
-
+    
+class ChangePassword(View):
+    template_name='mtrms/change-password.html'
+    context={
+        'title':'Change Password',
+        'isVerified':False,
+    }
+    def get(self,request):
+        return render(request,self.template_name,self.context)
+    
+    def post(self,request):
+        user=User.objects.filter(username=request.POST.get('username')).exists()
+        
+        if user:
+            request.session['username'] = request.POST.get('username')
+            self.context['isVerified']=True
+            
+            oldPassword=request.POST.get('old-password')
+            newPassword=request.POST.get('new-password')
+            print(oldPassword,newPassword)
+            if oldPassword and newPassword:
+                username=request.session.get('username')
+                print(username)
+                user=User.objects.get(username=username)
+                if user.check_password(oldPassword):
+                    print('done')
+                    user.set_password(newPassword)
+                    user.save()
+                    return HttpResponse("Successful")
+                else:
+                    return HttpResponse("Wrong password, please enter correct")
+            else:  
+                return render(request,self.template_name,self.context)
+        else:
+            return HttpResponse('No such user exists')
+            
 
     
 def login_patient(request):
