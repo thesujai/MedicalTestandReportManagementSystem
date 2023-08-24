@@ -1,6 +1,7 @@
 from django.shortcuts import render,HttpResponse,redirect
 from django.views import View
 from django.contrib.auth import authenticate, login
+from django.contrib import admin
 
 # Create your views here.
 def index(request):
@@ -23,11 +24,12 @@ class LoginDoctor(View):
         
         if user is not None:
             if user.is_staff:
-                print("Hello")
-                login(request, user)
                 request.session['first_name'] = user.first_name
                 return redirect('/doctor-dashboard/')
         return HttpResponse("Not valid ")
+
+
+
     
 def login_patient(request):
     return render(request,'mtrms/patient.html')
