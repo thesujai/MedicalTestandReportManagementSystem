@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import LoginDoctor,login_patient,signup_doctor,signup_patient,dashboard
+from .views import LoginDoctor,ChangePassword
 app_name='mtrms'
 urlpatterns = [
     path('',views.index,name='index'),
@@ -9,5 +9,6 @@ urlpatterns = [
     path('signup/patient',views.signup_patient,name='signup_patient'),
     path('signup/doctor',views.signup_doctor,name='signup_doctor'),
     path('doctor-dashboard/', views.dashboard, name='doctor-dashboard'),
+    path('change-password/',ChangePassword.as_view(),name='change-password')
     
 ]
