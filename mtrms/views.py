@@ -13,6 +13,7 @@ class LoginDoctor(View):
     template_name='mtrms/login.html'
     context={
         'title':'Doctor Login',
+        'action':'mtrms:login_doctor'
     }
     def get(self,request):
         return render(request,self.template_name,self.context)
@@ -33,6 +34,7 @@ class LoginPatient(View):
     template_name='mtrms/login.html'
     context={
         'title':'Patient Login',
+        'action':'mtrms:login_patient',
     }
     def get(self,request):
         return render(request,self.template_name,self.context)
@@ -44,9 +46,11 @@ class LoginPatient(View):
         print(user)
         
         if user is not None:
-            if user.is_staff:
+            print("User exists")
+            if not user.is_staff:
+                print('user not staff')
                 request.session['first_name'] = user.first_name
-                return redirect('/doctor-dashboard/')
+                return redirect('/patient-dashboard/')
         return HttpResponse("Not valid ")
 
 class ChangePassword(View):
@@ -97,10 +101,17 @@ def signup_doctor(request):
 
 
 
-def dashboard(request):
+def doctor_dashboard(request):
     first_name = request.session.get('first_name', '')
     context={
         'first_name':first_name,
     }
     return render(request,'mtrms/doctor-dashboard.html',context)
+
+def patient_dashboard(request):
+    first_name = request.session.get('first_name', '')
+    context={
+        'first_name':first_name,
+    }
+    return render(request,'mtrms/patient-dashboard.html',context)
     # return HttpResponse("Welcome")

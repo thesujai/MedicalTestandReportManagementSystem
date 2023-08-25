@@ -8,7 +8,8 @@ urlpatterns = [
     path('login/doctor',LoginDoctor.as_view(),name='login_doctor'),
     path('signup/patient',views.signup_patient,name='signup_patient'),
     path('signup/doctor',views.signup_doctor,name='signup_doctor'),
-    path('doctor-dashboard/', views.dashboard, name='doctor-dashboard'),
+    path('doctor-dashboard/', views.doctor_dashboard, name='doctor-dashboard'),
+    path('patient-dashboard/', views.patient_dashboard, name='patient-dashboard'),
     path('change-password/',ChangePassword.as_view(),name='change-password')
     
 ]

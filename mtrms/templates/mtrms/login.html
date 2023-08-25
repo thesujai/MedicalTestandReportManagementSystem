@@ -42,7 +42,7 @@
       <h1>{{title}}</h1>
     </header>
 
-    <form action="{%url 'mtrms:login_doctor'%}" method='post' class="login-form">
+    <form action="{%url action%}" method='post' class="login-form">
       {% csrf_token %}
       <div class="mb-3">
         <input type="text" class="form-control" placeholder="username" name="username">
