@@ -1,7 +1,7 @@
 {% extends 'mtrms/base.html' %}
 {% block head %}
 <style>
-    body {
+ body {
       background-color: #f8f9fa;
       display: flex;
       align-items: center;
@@ -33,7 +33,7 @@
     }
     .signup-form .btn-signup {
       width: 100%;
-    }
+    } 
   </style>{% endblock head %}
   {% block body %}
   <div class="signup-box">
@@ -41,20 +41,33 @@
       <h1>Patient Signup</h1>
     </header>
 
-    <form class="signup-form">
-      <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Full Name">
+    <form method="post" action={%url 'mtrms:signup_patient'%}>
+      {% csrf_token %}
+       <div class="mb-3">
+        <input type="text" class="form-control" placeholder="First Name" name="first_name">
       </div>
       <div class="mb-3">
-        <input type="email" class="form-control" placeholder="Email">
+        <input type="text" class="form-control" placeholder="Last Name" name="last_name">
       </div>
       <div class="mb-3">
-        <input type="password" class="form-control" placeholder="Password">
+        <input type="email" class="form-control" placeholder="Email" name="email">
+      </div>
+      <div class="mb-3">
+        <input type="text" class="form-control" placeholder="username" name="username">
+      </div>
+      <div class="mb-3">
+        <input type="password" class="form-control" placeholder="Password" name="password1">
+      </div>
+      <div class="mb-3">
+        <input type="password" class="form-control" placeholder="Confirm Password" name="password2">
       </div>
       <button type="submit" class="btn btn-primary btn-signup">Sign up</button>
+      {% comment %} {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Register</button> {% endcomment %}
     </form>
 
-    <p class="mt-3">Already have an account? <a href="patient-login.html">Login</a></p>
+    <p class="mt-3">Already have an account? <a href="{%url 'mtrms:login_patient'%}">Login</a></p>
   </div>
 
   <!-- Bootstrap JS (Optional, if you plan to use Bootstrap components that require JS) -->
