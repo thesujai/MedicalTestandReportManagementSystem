@@ -28,7 +28,27 @@ class LoginDoctor(View):
                 request.session['first_name'] = user.first_name
                 return redirect('/doctor-dashboard/')
         return HttpResponse("Not valid ")
+
+class LoginPatient(View):
+    template_name='mtrms/login.html'
+    context={
+        'title':'Patient Login',
+    }
+    def get(self,request):
+        return render(request,self.template_name,self.context)
     
+    def post(self,request):
+        username=request.POST.get('username')
+        password=request.POST.get('password')
+        user=authenticate(request,username=username,password=password)
+        print(user)
+        
+        if user is not None:
+            if user.is_staff:
+                request.session['first_name'] = user.first_name
+                return redirect('/doctor-dashboard/')
+        return HttpResponse("Not valid ")
+
 class ChangePassword(View):
     template_name='mtrms/change-password.html'
     context={
@@ -67,7 +87,7 @@ class ChangePassword(View):
 
     
 def login_patient(request):
-    return render(request,'mtrms/patient.html')
+    return render(request,'mtrms/login.html')
 
 def signup_patient(request):
     return render(request,'mtrms/signup.html')
