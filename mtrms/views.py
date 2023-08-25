@@ -3,10 +3,10 @@ from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib import admin
 from .models import User
+from .forms import PatientCreationForm
 
 # Create your views here.
 def index(request):
-    # return HttpResponse("Hello i am shaurya")
     return render(request,'mtrms/index.html')
 
 class LoginDoctor(View):
@@ -66,6 +66,7 @@ class ChangePassword(View):
         user=User.objects.filter(username=request.POST.get('username')).exists()
         
         if user:
+            print(request)
             request.session['username'] = request.POST.get('username')
             self.context['isVerified']=True
             
@@ -89,7 +90,24 @@ class ChangePassword(View):
             return HttpResponse('No such user exists')
             
 
+class PatientSignup(View):
+    template_name='mtrms/signup.html'
     
+    def get(self,request):
+        form=PatientCreationForm()
+        
+        return render(request,self.template_name,{'form':form})
+    
+    def post(self,request):
+        form=PatientCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("Success")
+        else: 
+            print(form.errors)
+            return HttpResponse("Invalid")
+        
+        
 def login_patient(request):
     return render(request,'mtrms/login.html')
 
@@ -98,7 +116,6 @@ def signup_patient(request):
 
 def signup_doctor(request):
     return render(request,'mtrms/signup.html')
-
 
 
 def doctor_dashboard(request):
@@ -114,4 +131,3 @@ def patient_dashboard(request):
         'first_name':first_name,
     }
     return render(request,'mtrms/patient-dashboard.html',context)
-    # return HttpResponse("Welcome")
