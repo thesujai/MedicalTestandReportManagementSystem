@@ -1,9 +1,11 @@
 from django.shortcuts import render,HttpResponse,redirect
+from django.urls import reverse
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib import admin
-from .models import User,Patient
+from .models import User,Patient,Doctor
 from .forms import PatientCreationForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -25,9 +27,11 @@ class LoginDoctor(View):
         print(user)
         
         if user is not None:
-            if user.is_staff:
-                request.session['first_name'] = user.first_name
-                return redirect('/doctor-dashboard/')
+            doctor=Doctor.objects.get(user=user)
+            if doctor:
+                request.session['first_name'] = doctor.user.first_name
+                url=reverse('mtrms:doctor-dashboard',args=[doctor.user.username])
+                return redirect(url)
         return HttpResponse("Not valid ")
 
 class LoginPatient(View):
@@ -47,10 +51,12 @@ class LoginPatient(View):
         
         if user is not None:
             print("User exists")
-            if not user.is_staff:
+            patient=Patient.objects.get(user=user)
+            if patient:
                 print('user not staff')
                 request.session['first_name'] = user.first_name
-                return redirect('/patient-dashboard/')
+                url=reverse('mtrms:patient-dashboard',args=[patient.user.username])
+                return redirect(url)
         return HttpResponse("Not valid ")
 
 class ChangePassword(View):
@@ -120,16 +126,22 @@ def signup_doctor(request):
     return render(request,'mtrms/signup.html')
 
 
-def doctor_dashboard(request):
+def doctor_dashboard(request,param):
     first_name = request.session.get('first_name', '')
     context={
         'first_name':first_name,
     }
     return render(request,'mtrms/doctor-dashboard.html',context)
 
-def patient_dashboard(request):
+# @login_required(login_url='mtrms:login')
+def patient_dashboard(request,param):
     first_name = request.session.get('first_name', '')
     context={
         'first_name':first_name,
     }
     return render(request,'mtrms/patient-dashboard.html',context)
+
+@login_required
+def book_appointment(request):
+    print(request.user.id)
+    return HttpResponse(f"{request}")
