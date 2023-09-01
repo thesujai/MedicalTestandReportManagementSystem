@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.hashers import make_password
+
 from django.contrib import admin
 
 from django.contrib.auth.models import AbstractUser
@@ -38,16 +38,3 @@ class Report(models.Model):
     result=models.CharField(max_length=128,default='-')
     notes=models.CharField(max_length=10240,blank=True)
     
-class CustomUserAdmins(admin.ModelAdmin):
-    actions = ['set_hashed_password']
-    
-    def set_hashed_password(self, request, queryset):
-        # Replace 'password123' with the desired password
-        newPassword = User.objects.make_random_password()
-        print(f"New Password:{newPassword}")
-        hashedPassword = make_password(newPassword)
-        queryset.update(password=hashedPassword)
-        self.message_user(request, "Passwords updated and hashed.")
-    set_hashed_password.short_description = "Set hashed password for selected users"
-    
-admin.site.register(User,CustomUserAdmins)
