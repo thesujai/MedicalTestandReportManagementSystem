@@ -2,7 +2,7 @@ from django.shortcuts import render,HttpResponse,redirect
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib import admin
-from .models import User
+from .models import User,Patient
 from .forms import PatientCreationForm
 
 # Create your views here.
@@ -101,7 +101,9 @@ class PatientSignup(View):
     def post(self,request):
         form=PatientCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user=form.save()
+            patient=Patient(user=user)
+            patient.save()
             return HttpResponse("Success")
         else: 
             print(form.errors)
