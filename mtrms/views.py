@@ -27,6 +27,7 @@ class LoginDoctor(View):
         print(user)
         
         if user is not None:
+            login(request,user)
             doctor=Doctor.objects.get(user=user)
             if doctor:
                 request.session['first_name'] = doctor.user.first_name
@@ -50,7 +51,7 @@ class LoginPatient(View):
         print(user)
         
         if user is not None:
-            print("User exists")
+            login(request,user)
             patient=Patient.objects.get(user=user)
             if patient:
                 print('user not staff')
@@ -125,7 +126,7 @@ def signup_patient(request):
 def signup_doctor(request):
     return render(request,'mtrms/signup.html')
 
-
+@login_required(login_url='mtrms:login')
 def doctor_dashboard(request,param):
     first_name = request.session.get('first_name', '')
     context={
@@ -133,7 +134,7 @@ def doctor_dashboard(request,param):
     }
     return render(request,'mtrms/doctor-dashboard.html',context)
 
-# @login_required(login_url='mtrms:login')
+@login_required(login_url='mtrms:login')
 def patient_dashboard(request,param):
     first_name = request.session.get('first_name', '')
     context={
