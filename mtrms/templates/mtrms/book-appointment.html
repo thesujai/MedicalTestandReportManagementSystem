@@ -47,7 +47,8 @@
     <h1>Book an Appointment</h1>
     </header>
     
-    <form class="appointment-form" action="#" method="post">
+    <form class="appointment-form" action="{%url 'mtrms:book-appointment'%}" method="post">
+      {% csrf_token %}
       
       <div class="mb-3">
         <label for="date">Select Date:</label>
