@@ -1,58 +1,83 @@
 {% extends 'mtrms/base.html' %}
-{% block head %} 
-<style>
-    body {
-         background-color: #f8f9fa;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         height: 100vh;
-         margin: 0;
-       }
-       .signup-box {
-         background-color: #ffffff;
-         border-radius: 10px;
-         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-         padding: 2rem;
-         width: 400px;
-         text-align: center;
-       }
-       .signup-header {
-         background-color: #0d6efd;
-         color: #fff;
-         padding: 1rem;
-         border-top-left-radius: 10px;
-         border-top-right-radius: 10px;
-         margin-bottom: 2rem;
-       }
-       .signup-form {
-         margin-top: 1.5rem;
-       }
-       .signup-form .form-control {
-         margin-bottom: 1rem;
-       }
-       .signup-form .btn-signup {
-         width: 100%;
-       } 
-     </style>
-{% endblock head %}
+{% block title %}{% endblock title %}
+ {% block head %} 
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+ <style>
+   body {
+     background-color: #f8f9fa;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     height: 100vh;
+     margin: 0;
+    }
+    .container-box {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+      width: 400px;
+      text-align: center;
+    }
+    .hospital-header {
+      background-color: #0d6efd;
+      color: #fff;
+      padding: 1rem;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      margin-bottom: 2rem;
+    }
+    .appointment-form {
+      margin-top: 1.5rem;
+    }
+    .appointment-form label {
+      font-weight: bold;
+    }
+    .appointment-form .form-control {
+      margin-bottom: 1rem;
+    }
+    .appointment-form .btn-book {
+      width: 100%;
+    }
+  </style>
+  {% endblock head %}
 {% block body %}
-<div class="container">
-  <h1>Book an Appointment</h1>
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <div class="card">
-        <div class="card-body">
-          <form action="#" method="post">
-            <div class="mb-3">
-              <label for="datetime">Select Date and Time:</label>
-              <input type="datetime-local" class="form-control" id="datetime" name="datetime" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Book Appointment</button>
-          </form>
-        </div>
+<div class="container-box">
+  <header class="hospital-header">
+    <h1>Book an Appointment</h1>
+    </header>
+    
+    <form class="appointment-form" action="#" method="post">
+      
+      <div class="mb-3">
+        <label for="date">Select Date:</label>
+        <input type="date" class="form-control" id="date" name="date" required>
       </div>
-    </div>
+
+      <div class="mb-3">
+        <label for="time">Select Time:</label>
+        <select class="form-control" id="time" name="time" required>
+          <option value="Morning">Morning</option>
+          <option value="Evening">Evening</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="notes">Reason For Appointment:</label>
+        <textarea class="form-control" type="text-area" id="notes" name="notes"  required oninput="autoResize(this)"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-book">Book Appointment</button>
+    </form>
   </div>
-</div>
-{% endblock body %}
+ 
+  <script>
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = (textarea.scrollHeight) + 'px';
+    }
+    $(function () {
+      $('#datetimepicker').datetimepicker();
+    });
+  </script>
+
+  {% endblock body %}

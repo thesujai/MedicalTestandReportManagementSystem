@@ -142,7 +142,9 @@ def patient_dashboard(request,param):
     }
     return render(request,'mtrms/patient-dashboard.html',context)
 
-@login_required
-def book_appointment(request):
-    print(request.user.id)
-    return HttpResponse(f"{request}")
+# @login_required
+class BookAppointment(View):
+    def get(self,request):
+        return render(request,'mtrms/book-appointment.html')
+    # print(request.user.id)
+    # return HttpResponse(f"{request}")
