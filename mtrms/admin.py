@@ -3,7 +3,6 @@ from .models import Doctor,Patient,Test,Appointment,Report,User
 from django.contrib.auth.hashers import make_password
 
 # Register your models here.
-# admin.site.register(Patient)
 admin.site.register(Appointment)
 admin.site.register(Test)
 admin.site.register(Report)
@@ -12,12 +11,12 @@ class CustomUserAdmins(admin.ModelAdmin):
     list_display=('id','username')
     
     def set_hashed_password(self, request, queryset):
-        # Replace 'password123' with the desired password
-        newPassword = User.objects.make_random_password()
-        print(f"New Password:{newPassword}")
-        hashedPassword = make_password(newPassword)
-        queryset.update(password=hashedPassword)
-        self.message_user(request, "Passwords updated and hashed.")
+        for user in queryset:
+            newPassword=f"{user.username}"
+            hashedPassword = make_password(newPassword)
+            user.password=hashedPassword
+            user.save()
+            self.message_user(request, "Passwords updated and hashed.\nNew password: <username>")
     set_hashed_password.short_description = "Set hashed password for selected users"
     
 admin.site.register(User,CustomUserAdmins)
