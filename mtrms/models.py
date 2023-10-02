@@ -24,6 +24,7 @@ class Appointment(models.Model):
     patient=models.ForeignKey(Patient,on_delete=models.CASCADE)
     datetime=models.DateTimeField()
     duration=models.DurationField()
+    notes=models.CharField(max_length=10240,blank=True)
     
 class Test(models.Model):
     name=models.CharField(max_length=128,blank=False)
