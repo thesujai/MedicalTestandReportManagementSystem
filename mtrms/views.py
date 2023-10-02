@@ -3,9 +3,13 @@ from django.urls import reverse
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib import admin
-from .models import User,Patient,Doctor
+from .models import User,Patient,Doctor, Appointment
 from .forms import PatientCreationForm
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from datetime import datetime,timedelta
+from django.utils.decorators import method_decorator
+
 
 # Create your views here.
 def index(request):
@@ -142,9 +146,53 @@ def patient_dashboard(request,param):
     }
     return render(request,'mtrms/patient-dashboard.html',context)
 
-# @login_required
+@method_decorator(login_required, name='dispatch')
 class BookAppointment(View):
+    
     def get(self,request):
         return render(request,'mtrms/book-appointment.html')
-    # print(request.user.id)
-    # return HttpResponse(f"{request}")
+
+    def post(self, request):
+            date = request.POST.get('date')
+            time = request.POST.get('time')
+            notes = request.POST.get('notes')
+
+            selected_date = datetime.strptime(date, '%Y-%m-%d')
+            slots = settings.MORNING_SLOTS if time == 'Morning' else settings.EVENING_SLOTS
+
+            doctors = Doctor.objects.all()
+            doctors = doctors.filter(user__is_active=True)
+            patient = Patient.objects.get(user=request.user)
+
+
+            # Iterate through the slots
+            for slot_time in slots:
+                # Convert the slot time to a datetime object
+                slot_start_time = selected_date.replace(
+                    hour=int(slot_time[:2]), minute=int(slot_time[3:])
+                )
+                slot_end_time = slot_start_time + timedelta(minutes=30)
+
+                # Iterate through the doctors to find an available slot
+                for doctor in doctors:
+                    existing_appointments = Appointment.objects.filter(
+                        doctor=doctor,
+                        datetime__date=selected_date.date(),
+                        datetime__range=(slot_start_time, slot_end_time)
+                    )
+
+                    if not existing_appointments.exists():
+                        # Slot is available, create the appointment
+                        appointment = Appointment(
+                            doctor=doctor,
+                            patient=patient,
+                            datetime=slot_start_time,
+                            duration=timedelta(minutes=30),
+                            notes=notes
+                        )
+                        appointment.save()
+
+                        return HttpResponse("success")
+
+            # no slot
+            return HttpResponse("No slot available") 
