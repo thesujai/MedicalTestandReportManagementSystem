@@ -2,7 +2,7 @@ from django.shortcuts import render,HttpResponse,redirect
 from django.urls import reverse
 from django.views import View
 from django.contrib.auth import authenticate, login
-from django.contrib import admin
+from django.contrib import admin,messages
 from .models import User,Patient,Doctor, Appointment
 from .forms import PatientCreationForm
 from django.contrib.auth.decorators import login_required
@@ -196,3 +196,50 @@ class BookAppointment(View):
 
             # no slot
             return HttpResponse("No slot available") 
+
+@method_decorator(login_required, name='dispatch')
+class ViewAppointments(View):
+    def get(self, request):
+        doctor = Doctor.objects.get(user=request.user)
+        appointments = Appointment.objects.filter(doctor=doctor)
+        context = {
+            'appointments': appointments,  # Pass the appointments queryset
+        }
+        return render(request, 'mtrms/view-appointments.html', context)
+
+    def post(self, request):
+        if 'mark_done' in request.POST:
+            appointment_id = request.POST['appointment_id']
+            try:
+                appointment = Appointment.objects.get(pk=appointment_id)
+                appointment.is_done = True
+                appointment.save()
+                messages.success(request, f'Appointment for {appointment.patient} marked as done.')
+            except Appointment.DoesNotExist:
+                messages.error(request, 'Appointment not found.')
+        
+        elif 'delete_appointment' in request.POST:
+            appointment_id = request.POST['appointment_id']
+            try:
+                appointment = Appointment.objects.get(pk=appointment_id)
+                appointment.delete()
+                messages.success(request, f'Appointment for {appointment.patient} deleted.')
+            except Appointment.DoesNotExist:
+                messages.error(request, 'Appointment not found.')
+
+        elif 'input_sample_number' in request.POST:
+            appointment_id = request.POST['appointment_id']
+            sample_number = request.POST['sample_number']
+            try:
+                appointment = Appointment.objects.get(pk=appointment_id)
+                appointment.sample_number = sample_number
+                appointment.save()
+                messages.success(request, f'Sample number for {appointment.patient} updated.')
+            except Appointment.DoesNotExist:
+                messages.error(request, 'Appointment not found.')
+
+        return redirect(reverse('mtrms:view-appointments'))
+    
+    
+def trail(request,param):
+    return HttpResponse(f"hi, {param}")

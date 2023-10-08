@@ -25,6 +25,8 @@ class Appointment(models.Model):
     datetime=models.DateTimeField()
     duration=models.DurationField()
     notes=models.CharField(max_length=10240,blank=True)
+    is_done = models.BooleanField(default=False)
+    sample_number = models.PositiveIntegerField(null=True, blank=True,default=None)
     
 class Test(models.Model):
     name=models.CharField(max_length=128,blank=False)
