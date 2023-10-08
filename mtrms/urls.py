@@ -1,7 +1,8 @@
 from django.urls import path
+from django.shortcuts import HttpResponse
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import LoginDoctor,ChangePassword, LoginPatient, PatientSignup, BookAppointment
+from .views import LoginDoctor,ChangePassword, LoginPatient, PatientSignup, BookAppointment,ViewAppointments
 app_name='mtrms'
 urlpatterns = [
     path('',views.index,name='index'),
@@ -14,5 +15,6 @@ urlpatterns = [
     path('patient/<str:param>/', views.patient_dashboard, name='patient-dashboard'),
     path('change-password/',ChangePassword.as_view(),name='change-password'),
     path('book-appointment/',BookAppointment.as_view(),name='book-appointment'),
-    
+    path('appointments/',ViewAppointments.as_view(),name='view-appointments'),
+    path('create-report/<int:appointment_id>/',views.trail,name='create-report'),
 ]

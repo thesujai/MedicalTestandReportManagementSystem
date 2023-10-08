@@ -1,0 +1,143 @@
+{% extends 'mtrms/base.html' %}
+{% block title %}Manage Appointments{% endblock title %}
+{% block head %}
+<style>
+  body {
+    background-color: #f8f9fa;
+    padding: 2rem;
+  }
+  .appointment-table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 800px;
+  }
+  .appointment-table h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #0d6efd;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px; /* Increase padding for better spacing */
+  }
+  th {
+    background-color: #0d6efd;
+    color: white;
+  }
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  tr:hover {
+    background-color: #ddd;
+  }
+  .delete-icon {
+    color: red;
+    cursor: pointer;
+  }
+  /* Style the input field and submit button for sample number */
+  input[name="sample_number"] {
+    padding: 5px;
+    width: 80%;
+  }
+  button[name="input_sample_number"] {
+    padding: 5px 10px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  /* Style the clickable sample number */
+  .sample-number {
+    cursor: pointer;
+    color: #0d6efd;
+    text-decoration: underline;
+  }
+  /* Style the action buttons */
+  form button[type="submit"] {
+    padding: 5px 10px;
+    margin-right: 5px; /* Add spacing between buttons */
+  }
+  /* Style the "Mark as Done" button */
+  form button[name="mark_done"] {
+    background-color: #198754;
+  }
+  /* Style the "Delete" button */
+  form button[name="delete_appointment"] {
+    background-color: #dc3545;
+  }
+</style>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+{% endblock head %}
+{% block body %}
+<div class="appointment-table">
+  <h2>Manage Appointments</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Appointment ID</th>
+        <th>Patient</th>
+        <th>Date and Time</th>
+        <th>Duration</th>
+        <th>Notes</th>
+        <th>Resolved</th>
+        <th>Sample Number</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for appointment in appointments %}
+      <tr >
+        <td>{{ appointment.id }}</td>
+        <td>{{ appointment.patient }}</td>
+        <td>{{ appointment.datetime }}</td>
+        <td>{{ appointment.duration }}</td>
+        <td>{{ appointment.notes }}</td>
+        <td>
+          {% if appointment.is_done %}
+          Done
+          {% else %}
+          Pending
+          {% endif %}
+        </td>
+        <td>
+          {% if appointment.sample_number %}
+          <span class="sample-number" data-appointment-id="{{ appointment.id }}">
+            {{ appointment.sample_number }}
+          </span>
+          {% else %}
+          <form method="post" action="{% url 'mtrms:view-appointments' %}">
+            {% csrf_token %}
+            <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+            <input type="text" name="sample_number" placeholder="Sample Number">
+            <button type="submit" name="input_sample_number">Submit</button>
+          </form>
+          {% endif %}
+        </td>
+        <td>
+          <form method="post" action="{% url 'mtrms:view-appointments' %}">
+            {% csrf_token %}
+            <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+            {% if not appointment.is_done %}
+            <button type="submit" name="mark_done" class="btn btn-success">Mark as Done</button>
+            {% endif %}
+            <button type="submit" name="delete_appointment" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
+      </a>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+</script>
+{% endblock body %}
