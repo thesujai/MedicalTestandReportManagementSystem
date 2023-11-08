@@ -3,8 +3,8 @@ from django.urls import reverse
 from django.views import View
 from django.contrib.auth import authenticate, login
 from django.contrib import admin,messages
-from .models import User,Patient,Doctor, Appointment
-from .forms import PatientCreationForm
+from .models import User,Patient,Doctor, Appointment, Report
+from .forms import PatientCreationForm, ReportEntryForm, ReportForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from datetime import datetime,timedelta
@@ -240,6 +240,72 @@ class ViewAppointments(View):
 
         return redirect(reverse('mtrms:view-appointments'))
     
-    
+class ReportEntryView(View):
+    template_name = 'mtrms/enter-report.html'  # Create this template
+
+    def get(self, request):
+        report_form = ReportForm()
+        entry_form = ReportEntryForm()
+        context = {'report_form': report_form, 'entry_form': entry_form, 'appointment': None}
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        entry_form = ReportEntryForm(request.POST)
+        if entry_form.is_valid():
+            appointment_id = entry_form.cleaned_data['appointment_id']
+
+            try:
+                appointment = Appointment.objects.get(id=appointment_id)
+            except Appointment.DoesNotExist:
+                # Handle case where the appointment ID does not exist
+                report_form = ReportForm()
+                context = {'report_form': report_form, 'entry_form': entry_form, 'error_message': 'Appointment ID does not exist', 'appointment': None}
+                return render(request, self.template_name, context)
+
+            # Pre-fill the form with appointment details
+            report_form = ReportForm(initial={'appointment': appointment.id})
+            context = {'report_form': report_form, 'entry_form': entry_form, 'appointment': appointment}
+            return render(request, self.template_name, context)
+
+        report_form = ReportForm(request.POST)
+        if report_form.is_valid():
+            # appointment_id = report_form.cleaned_data['appointment_id']
+            # appointment = Appointment.objects.get(id=appointment_id)
+            # print(request)
+            # for x in request:
+            #     print(x)
+            # print(request.session['apointment_id'])
+            # print(appointment)
+            # print(entry_form)
+            new_report = report_form.save(commit=False)
+            # new_report.appointment = appointment
+            new_report.date = datetime.now() 
+            new_report.save()
+        # print(report_form.is_valid())
+        context = {'report_form': report_form, 'entry_form': entry_form, 'appointment': None}
+        return HttpResponse("Success")   
+
+class PatientAppointmentsView(View):
+    template_name = 'mtrms/view-appointments-patient.html'  # Create this template
+
+    def get(self, request):
+        # Retrieve the patient's appointments
+        appointments = Appointment.objects.filter(patient=request.user.patient)
+
+        context = {'appointments': appointments}
+        return render(request, self.template_name, context)
+    def post(self, request):
+        # Handle actions like marking appointments as done
+        appointment_id = request.POST.get('appointment_id')
+        mark_done = request.POST.get('mark_done')
+
+        if appointment_id and mark_done:
+            # Check if the appointment belongs to the patient
+            appointment = Appointment.objects.filter(id=appointment_id, patient=request.user.patient, is_done=False).first()
+            if appointment:
+                appointment.is_done = True
+                appointment.save()
+
+        return redirect('patient-appointments')
 def trail(request,param):
     return HttpResponse(f"hi, {param}")

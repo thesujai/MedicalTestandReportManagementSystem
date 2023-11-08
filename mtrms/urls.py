@@ -2,7 +2,7 @@ from django.urls import path
 from django.shortcuts import HttpResponse
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import LoginDoctor,ChangePassword, LoginPatient, PatientSignup, BookAppointment,ViewAppointments
+from .views import LoginDoctor,ChangePassword, LoginPatient, PatientSignup, BookAppointment,ViewAppointments, ReportEntryView, PatientAppointmentsView
 app_name='mtrms'
 urlpatterns = [
     path('',views.index,name='index'),
@@ -17,4 +17,6 @@ urlpatterns = [
     path('book-appointment/',BookAppointment.as_view(),name='book-appointment'),
     path('appointments/',ViewAppointments.as_view(),name='view-appointments'),
     path('create-report/<int:appointment_id>/',views.trail,name='create-report'),
+    path('enter-report/', ReportEntryView.as_view(), name='enter-report'),
+    path('appointments-patient/',PatientAppointmentsView.as_view(),name='appointments-patient')
 ]

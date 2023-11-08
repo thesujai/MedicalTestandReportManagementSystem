@@ -27,17 +27,15 @@ class Appointment(models.Model):
     notes=models.CharField(max_length=10240,blank=True)
     is_done = models.BooleanField(default=False)
     sample_number = models.PositiveIntegerField(null=True, blank=True,default=None)
-    
-class Test(models.Model):
-    name=models.CharField(max_length=128,blank=False)
-    cost=models.IntegerField()
-    sample_number=models.IntegerField()
-    date=models.DateField()
+    def __str__(self):
+        return f"{self.id}"
+
     
 class Report(models.Model):
-    doctor=models.ForeignKey(Doctor,on_delete=models.SET_NULL,null=True)
-    patient=models.ForeignKey(Patient,on_delete=models.SET_NULL,null=True)
+    appointment=models.ForeignKey(Appointment,on_delete=models.SET_NULL,null=True)
     date=models.DateField()
     result=models.CharField(max_length=128,default='-')
     notes=models.CharField(max_length=10240,blank=True)
+    def __str__(self):
+        return f"{self.id}"
     

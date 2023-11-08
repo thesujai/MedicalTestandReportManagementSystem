@@ -1,10 +1,9 @@
 from django.contrib import admin
-from .models import Doctor,Patient,Test,Appointment,Report,User
+from .models import Doctor,Patient,Appointment,Report,User
 from django.contrib.auth.hashers import make_password
 
 # Register your models here.
 admin.site.register(Appointment)
-admin.site.register(Test)
 admin.site.register(Report)
 class CustomUserAdmins(admin.ModelAdmin):
     actions = ['set_hashed_password']

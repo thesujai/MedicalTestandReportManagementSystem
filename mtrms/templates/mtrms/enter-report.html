@@ -1,0 +1,42 @@
+{% extends "mtrms/base.html" %}
+{% block title %}Get Report{% endblock title %}
+{% block head %}{% endblock head %}
+{% block body %}
+<div class="container">
+    <h2>Enter Report</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ entry_form.as_p }}
+        <button type="submit" class="btn btn-primary">Fetch Appointment Details</button>
+    </form>
+
+    {% if appointment %}
+    <hr>
+    <h3>Appointment Details</h3>
+    <p>Appointment ID: {{ appointment.id }}</p>
+    <!-- Display other appointment details here -->
+
+    <form method="post">
+        {% csrf_token %}
+        {% comment %} <input type="hidden" name="appointment_id" value="{{ appointment.id }}"> {% endcomment %}
+        <div class="form-group" style="display: none;">
+            <label for="{{ report_form.result.id_for_label }}">Result</label>
+            {{ report_form.appointment }}
+        </div>
+        <div class="form-group">
+            <label for="{{ report_form.result.id_for_label }}">Result</label>
+            {{ report_form.result }}
+        </div>
+        <div class="form-group">
+            <label for="{{ report_form.notes.id_for_label }}">Notes</label>
+            <textarea class="form-control" id="{{ report_form.notes.id_for_label }}" name="{{ report_form.notes.name }}" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Report</button>
+    </form>
+    {% endif %}
+
+    {% if error_message %}
+    <p>{{ error_message }}</p>
+    {% endif %}
+</div>
+{% endblock body %}
